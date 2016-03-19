@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -39,6 +40,10 @@ public class Launcher extends Application {
     private Stage stage;
     private String phase;
 
+    ButtonType buttonYes = new ButtonType("Yes");
+    ButtonType buttonNo = new ButtonType("No");
+    boolean userWantsToUpdate = false;
+
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
 
@@ -52,23 +57,53 @@ public class Launcher extends Application {
         stage.setScene(scene);
         stage.show();
 
+
+
         new Thread(() -> {
             try {
                 updateManifest();
-                createUpdateWrapper();
-                syncFiles();
+                if (updateAvailable()){
+                    Platform.runLater(() -> {
+                        try {
+                            userWantsToUpdate();
+                            try {
+                                createApplication();
+                                launchAppFromManifest();
+                            } catch (Exception ex) {
+                                reportError(String.format("Error during %s phase", phase), ex);
+                            }
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, String.format("Error during %s phase", phase), e);
+                        }
+                    });
+                }else {
+                    createApplication();
+                    launchAppFromManifest();
+                }
             } catch (Exception ex) {
                 log.log(Level.WARNING, String.format("Error during %s phase", phase), ex);
             }
 
-            try {
-                createApplication();
-                launchAppFromManifest();
-            } catch (Exception ex) {
-                reportError(String.format("Error during %s phase", phase), ex);
-            }
+
 
         }).start();
+    }
+
+    private boolean userWantsToUpdate() throws Exception {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Update Available");
+        alert.setHeaderText("There is an update available.");
+        alert.setContentText("Would you like to update?");
+
+        alert.getButtonTypes().setAll(buttonYes, buttonNo);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonYes){
+            userWantsToUpdate = true;
+        }
+        if (userWantsToUpdate){
+            syncFiles();
+        }
+        return userWantsToUpdate;
     }
 
     public static void main(String[] args) {
@@ -122,7 +157,16 @@ public class Launcher extends Application {
         syncManifest();
     }
 
+    public boolean updateAvailable(){
+        List<LibraryFile> needsUpdate = manifest.files.stream()
+                .filter(LibraryFile::loadForCurrentPlatform)
+                .filter(LibraryFile::needsUpdate)
+                .collect(Collectors.toList());
+        return needsUpdate.size() > 0;
+    }
+
     private void syncFiles() throws Exception {
+        createUpdateWrapper();
         phase = "File Synchronization";
 
         List<LibraryFile> needsUpdate = manifest.files.stream()

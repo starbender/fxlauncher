@@ -28,6 +28,14 @@ public class FXManifest {
 	String wrapperStyle = "-fx-spacing: 10; -fx-padding: 25;";
     @XmlElement
     String parameters;
+    @XmlElement
+    String majorVersion;
+    @XmlElement
+    String minorVersion;
+    @XmlElement
+    String buildVersion;
+    @XmlElement
+    String releaseNotes;
 
     public String getFilename() {
         return String.format("%s.xml", launchClass);
@@ -46,6 +54,10 @@ public class FXManifest {
         if (o == null || getClass() != o.getClass()) return false;
 
         FXManifest that = (FXManifest) o;
+
+        if (!(majorVersion.equals(that.majorVersion) & minorVersion.equals(that.minorVersion) & buildVersion.equals(that.buildVersion))){
+            return false;
+        }
 
         if (uri != null ? !uri.equals(that.uri) : that.uri != null) return false;
         if (launchClass != null ? !launchClass.equals(that.launchClass) : that.launchClass != null) return false;
@@ -67,6 +79,9 @@ public class FXManifest {
         result = 31 * result + (updateLabelStyle != null ? updateLabelStyle.hashCode() : 0);
         result = 31 * result + (progressBarStyle != null ? progressBarStyle.hashCode() : 0);
         result = 31 * result + (wrapperStyle != null ? wrapperStyle.hashCode() : 0);
+        result = 31 * result + (majorVersion != null ? majorVersion.hashCode() : 0);
+        result = 31 * result + (minorVersion != null ? minorVersion.hashCode() : 0);
+        result = 31 * result + (buildVersion != null ? buildVersion.hashCode() : 0);
         return result;
     }
 }

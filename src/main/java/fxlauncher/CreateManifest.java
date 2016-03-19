@@ -1,5 +1,7 @@
 package fxlauncher;
 
+import starbender.model.meta.MetaData;
+
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.net.URI;
@@ -24,6 +26,9 @@ public class CreateManifest {
         FXManifest manifest = new FXManifest();
         manifest.uri = baseURI;
         manifest.launchClass = launchClass;
+        manifest.majorVersion = MetaData.instance.MajorVersion;
+        manifest.minorVersion = MetaData.instance.MinorVersion;
+        manifest.buildVersion = MetaData.instance.Build;
 
         Files.walkFileTree(appPath, new SimpleFileVisitor<Path>() {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
