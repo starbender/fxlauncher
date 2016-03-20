@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 @XmlRootElement(name = "Application")
@@ -69,6 +70,18 @@ public class FXManifest {
             return false;
         return wrapperStyle != null ? wrapperStyle.equals(that.wrapperStyle) : that.wrapperStyle == null;
 
+    }
+
+    public List<LibraryFile> filesNeedingUpdate(){
+        List<LibraryFile> needsUpdate = files.stream()
+                .filter(LibraryFile::loadForCurrentPlatform)
+                .filter(LibraryFile::needsUpdate)
+                .collect(Collectors.toList());
+        return needsUpdate;
+    }
+
+    public boolean updateNeeded(){
+        return filesNeedingUpdate().size() > 0;
     }
 
     public int hashCode() {

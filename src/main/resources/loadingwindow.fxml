@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="507.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" layoutX="154.0" layoutY="342.0" spacing="10.0" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="154.0" AnchorPane.rightAnchor="153.0">
+         <children>
+            <Label fx:id="status" alignment="CENTER" text="Label" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            <ProgressBar fx:id="progressBar" prefWidth="200.0" />
+         </children>
+      </VBox>
+      <ImageView fitHeight="211.0" fitWidth="378.0" layoutX="65.0" layoutY="14.0" pickOnBounds="true" AnchorPane.leftAnchor="65.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="14.0">
+         <image>
+            <Image url="@mgsft_temp_logo.png" />
+         </image>
+         <effect>
+            <Reflection />
+         </effect>
+      </ImageView>
+   </children>
+</fx:root>
